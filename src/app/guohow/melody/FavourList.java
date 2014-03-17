@@ -24,6 +24,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ import com.guohow.melody_sildemenu.R;
 public class FavourList extends Fragment {
 	protected View mRootView;
 	TextView bottomInfo;
+	private ListView mFavourList;
+	Button btn_play, btn_next, btn_previous;
 	protected Context mContext;
 	public static int UPDATE = 0;
 	private static SQLHelper dbHelper;
@@ -45,11 +48,7 @@ public class FavourList extends Fragment {
 	public static SQLiteDatabase db2;
 	private Cursor cursor;
 	static List<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
-
-	// Handler
 	Handler handler = new Handler();
-
-	private ListView mFavourList;
 
 	// 数据库
 
@@ -66,8 +65,7 @@ public class FavourList extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mRootView = inflater
-				.inflate(R.layout.favourite, container, false);
+		mRootView = inflater.inflate(R.layout.favourite, container, false);
 
 		// 表操作
 		createCursorTable();
@@ -77,6 +75,8 @@ public class FavourList extends Fragment {
 		listItemAda();
 		// 长按事件监听
 		onItemLongPressedControler();
+		//按钮监听
+		btn_Control();
 		return mRootView;
 	}
 
@@ -86,18 +86,17 @@ public class FavourList extends Fragment {
 
 		handler.post(new Runnable() {
 			public void run() {
+				PlayerUIMonitor.btnCheck();
 				if (UPDATE == 1) {
-					data.clear();
 					createCursorTable();
 					// 初始化列表
 					initList();
 					UPDATE = 0;
-
-				}
-
+			}
 				if (MusicPlayer.data != null && bottomInfo != null) {
-					bottomInfo.setText("正在播放:" + Player.playingSongInfo + "\t"
-							+ "艺术家:" + Player.playingArtInfo);
+					bottomInfo.setText("正在播放:"
+							+ PlayerUIMonitor.playingSongTitle + "\t" + "艺术家:"
+							+ PlayerUIMonitor.playingSongArtist);
 				}
 				handler.postDelayed(this, 1000);
 			}
@@ -112,23 +111,7 @@ public class FavourList extends Fragment {
 		super.onViewStateRestored(savedInstanceState);
 	}
 
-	private void initList() {
-		mFavourList = (ListView) mRootView.findViewById(R.id.allSongsList);
-		// 更新data
 
-		bottomInfo = (TextView) mRootView.findViewById(R.id.info_all);
-		bottomInfo.setText("红心队列：" + data.size() + "首");
-		// simpleAdapter
-		if (data != null) {
-			mFavourList.setAdapter(new SimpleAdapter(mContext, data,
-					R.layout.favouritem, new String[] { "title", "artist",
-							"url" }, new int[] { R.id.mFTitle, R.id.mArtist,
-							R.id.mFUrl }) {
-
-			});
-		}
-
-	}
 
 	// 创建、查询
 	private void createCursorTable() {
@@ -145,6 +128,7 @@ public class FavourList extends Fragment {
 			cursor = db.query(SQLHelper.TABLE_NAME, null, null, null, null,
 					null, "title" + " DESC");
 			cursor.moveToFirst();
+			data.clear();
 			while (!cursor.isAfterLast() && cursor.getString(1) != null) {
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				// mList casue error????????????guohow
@@ -152,6 +136,7 @@ public class FavourList extends Fragment {
 				map.put("title", cursor.getString(1));
 				map.put("artist", cursor.getString(2));
 				map.put("url", cursor.getString(3));
+				
 				data.add(map);
 				cursor.moveToNext();
 			}
@@ -162,6 +147,23 @@ public class FavourList extends Fragment {
 			// 注：表以前数据将丢失
 			++DB_VERSION;
 			dbHelper.onUpgrade(db, --DB_VERSION, DB_VERSION);
+		}
+
+	}
+	private void initList() {
+		mFavourList = (ListView) mRootView.findViewById(R.id.allSongsList);
+		// 更新data
+
+		bottomInfo = (TextView) mRootView.findViewById(R.id.info_all);
+		bottomInfo.setText("红心队列：" + data.size() + "首");
+		// simpleAdapter
+		if (data != null) {
+			mFavourList.setAdapter(new SimpleAdapter(mContext, data,
+					R.layout.favouritem, new String[] { "title", "artist",
+							"url" }, new int[] { R.id.mFTitle, R.id.mArtist,
+							R.id.mFUrl }) {
+
+			});
 		}
 
 	}
@@ -207,6 +209,7 @@ public class FavourList extends Fragment {
 				case OnScrollListener.SCROLL_STATE_IDLE: //
 					if (bottomInfo != null) {
 						bottomInfo.setVisibility(View.VISIBLE);
+						
 					}
 
 					System.out.println("停止...");
@@ -236,6 +239,13 @@ public class FavourList extends Fragment {
 
 	}
 
+	private void btn_Control() {
+		btn_play = (Button) mRootView.findViewById(R.id.play);
+		btn_next = (Button) mRootView.findViewById(R.id.next);
+		btn_previous = (Button) mRootView.findViewById(R.id.previous);
+		new PlayerUIMonitor(btn_play, btn_previous, btn_next);
+	}
+
 	private void onItemLongPressedControler() {
 		mFavourList
 				.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
@@ -247,7 +257,8 @@ public class FavourList extends Fragment {
 						_index = ((AdapterContextMenuInfo) menuInfo).position;// 获取menu点击项的position
 
 						// menu.setHeaderIcon(R.drawable.ic_launcher);
-						menu.setHeaderTitle(data.get(_index).get("title").toString());
+						menu.setHeaderTitle(data.get(_index).get("title")
+								.toString());
 
 						menu.add(0, 6, 0, "移出我喜欢");
 						// menu.add(0, 8, 0, "设为铃声");
@@ -264,13 +275,8 @@ public class FavourList extends Fragment {
 		switch (item.getItemId()) {
 
 		case 6:
-			//
-			// dbHelper = new SQLHelper(mRootView.getContext(), DB_NAME, null,
-			// DB_VERSION);
-			// db2 = dbHelper.getWritableDatabase();// 获取可写的数据库
-			db.delete(SQLHelper.TABLE_NAME, "title" + "=?", new String[] { (String) data
-					.get(_index).get("title") });
-
+			db.delete(SQLHelper.TABLE_NAME, "title" + "=?",
+					new String[] { (String) data.get(_index).get("title") });
 			UPDATE = 1;
 
 			break;
@@ -285,13 +291,6 @@ public class FavourList extends Fragment {
 							+ ",一定要听哦！ shared by Melody!");
 			startActivity(Intent.createChooser(intent, "分享到"));
 
-			break;
-		case 8:
-			// new
-			// ToneBean().setVoice((data.get(_index).get("url")),0,mRootView.getContext().getContentResolver());
-			// Toast.makeText(mRootView.getContext(),
-			// "铃声设置为:" + data.get(_index).get("title"),
-			// Toast.LENGTH_SHORT).show();
 			break;
 
 		default:

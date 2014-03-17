@@ -3,13 +3,13 @@ package app.guohow.melody.player;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import app.guohow.melody.PlayerUIMonitor;
 
 public class MusicPlayer extends Activity {
 
@@ -54,6 +54,7 @@ public class MusicPlayer extends Activity {
 		player.start();
 		// 已经播放过任何歌曲
 		hasEverPlayed = true;
+		PlayerUIMonitor.updatePlayingSongInfo();
 		// 设置进度条长度
 		if (seekBar != null) {
 			seekBar.setMax(player.getDuration());
@@ -78,12 +79,14 @@ public class MusicPlayer extends Activity {
 	public static void resume() {
 
 		player.start();
+		PlayerUIMonitor.updatePlayingSongInfo();
 	}
 
 	public static void previous() {
 		current = current - 1 < 0 ? data.size() - 1 : current - 1;
 		player.stop();
 		new MusicPlayer(current, data).play();
+		PlayerUIMonitor.updatePlayingSongInfo();
 	}
 
 	public static void next() {
@@ -98,21 +101,11 @@ public class MusicPlayer extends Activity {
 			new MusicPlayer(current, data).play();
 		} else if (player == null) {
 			playRandom();
-			RANDOM = 1;// 正在随机
 		}
-
+		PlayerUIMonitor.updatePlayingSongInfo();
 	}
 
 	public static void playRandom() {
-		current = new Random().nextInt();
-		// 如果创建过对象
-		if (player != null) {
-			player.stop();
-			new MusicPlayer(current, data).play();
-		} else if (player == null) {
-			// 如果未创建过对象
-			new MusicPlayer(current, data).play();
-		}
 
 	}
 

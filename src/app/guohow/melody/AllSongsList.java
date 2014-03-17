@@ -25,12 +25,12 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import app.guohow.melody.database.SQLHelper;
 import app.guohow.melody.player.MusicPlayer;
-import app.guohow.melody.ui.SlideBarView;
 import app.guohow.melody.utils.Mp3Bean;
 import app.guohow.melody.utils.MusicUtils;
 
@@ -39,25 +39,19 @@ import com.guohow.melody_sildemenu.R;
 public class AllSongsList extends Fragment {
 
 	public View mRootView;
-	TextView mName = null;
-
-	TextView bottomInfo, float_letter;
-	ListView listView = null;
-	SlideBarView mSlideBar = null;
-	public static int _index;
-	// 更新底兰info
-
-	Handler handler = new Handler();
-
-	// List<File> mList;
-	List<HashMap<String, Object>> data;
-
 	protected Context mContext;
+	List<HashMap<String, Object>> data;
+	Button btn_play, btn_next, btn_previous;
+	TextView bottomInfo;
+	ListView listView = null;
 
 	private static SQLHelper dbHelper;
 	private static String DB_NAME = "mTable.db";
 	private static int DB_VERSION = 1;
+	public static int _index;
 	public static SQLiteDatabase db;
+
+	Handler handler = new Handler();
 
 	public AllSongsList() {
 		super();
@@ -75,13 +69,9 @@ public class AllSongsList extends Fragment {
 		mRootView = inflater.inflate(R.layout.songslist, container, false);
 
 		initMusicListAdapter();
-
-		// createCursorTable();
-		listItemAda();
-		// 监听长按事件
+		listItemInit();
 		onItemLongPressedControler();
-		// mySlideBarInit();
-
+		btn_Control();
 		return mRootView;
 	}
 
@@ -96,10 +86,10 @@ public class AllSongsList extends Fragment {
 		// handler更新底兰
 		handler.post(new Runnable() {
 			public void run() {
-
+				PlayerUIMonitor.btnCheck();
 				if (MusicPlayer.data != null && bottomInfo != null) {
-					bottomInfo.setText("正在播放:" + Player.playingSongInfo + "\t"
-							+ "艺术家:" + Player.playingArtInfo);
+					bottomInfo.setText("正在播放:" + PlayerUIMonitor.playingSongTitle
+							+ "\t" + "艺术家:" + PlayerUIMonitor.playingSongArtist);
 				}
 
 				// 1秒之后再次发送
@@ -116,12 +106,6 @@ public class AllSongsList extends Fragment {
 	 * @see
 	 * android.support.v4.app.Fragment#onViewStateRestored(android.os.Bundle)
 	 */
-	@Override
-	public void onViewStateRestored(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-
-		super.onViewStateRestored(savedInstanceState);
-	}
 
 	public void initMusicListAdapter() {
 
@@ -150,7 +134,7 @@ public class AllSongsList extends Fragment {
 
 	}
 
-	private void listItemAda() {
+	private void listItemInit() {
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -165,7 +149,7 @@ public class AllSongsList extends Fragment {
 					new MusicPlayer(position, data).play();
 					MusicPlayer.FLAG = 1;
 					// 设置listView的当前位置
-					// listView.setSelection(position);
+					listView.setSelection(position);
 				} else if (MusicPlayer.FLAG == 1) {
 
 					if (position == MusicPlayer.current) {
@@ -220,6 +204,13 @@ public class AllSongsList extends Fragment {
 
 	}
 
+	private void btn_Control() {
+		btn_play = (Button) mRootView.findViewById(R.id.play);
+		btn_next = (Button) mRootView.findViewById(R.id.next);
+		btn_previous = (Button) mRootView.findViewById(R.id.previous);
+		new PlayerUIMonitor(btn_play, btn_previous, btn_next);
+	}
+
 	private void onItemLongPressedControler() {
 		listView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 
@@ -228,12 +219,8 @@ public class AllSongsList extends Fragment {
 					ContextMenuInfo menuInfo) {
 				// TODO Auto-generated method stub
 				_index = ((AdapterContextMenuInfo) menuInfo).position;// 获取menu点击项的position
-
-				// menu.setHeaderIcon(R.drawable.ic_launcher);
 				menu.setHeaderTitle(data.get(_index).get("title").toString());
-
 				menu.add(0, 0, 0, "标记为我喜欢");
-				// menu.add(0, 2, 0, "设为铃声");
 				menu.add(0, 3, 0, "分享");
 
 			}
@@ -273,15 +260,6 @@ public class AllSongsList extends Fragment {
 					"这首歌挺好听，推荐给你！歌名是：" + data.get(_index).get("title")
 							+ ",一定要听哦！ shared by Melody!");
 			startActivity(Intent.createChooser(intent, "分享到"));
-			break;
-
-		case 2:
-			// 铃声设置出错:空指针
-			// new
-			// ToneBean().setVoice((data.get(_index).get("url")),0,mRootView.getContext().getContentResolver());
-			// Toast.makeText(mRootView.getContext(),
-			// "铃声设置为:" + data.get(_index).get("title"), Toast.LENGTH_SHORT)
-			// .show();
 			break;
 
 		default:
