@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:Android="http://schemas.android.com/apk/res/android"
+    Android:layout_width="fill_parent"
+    Android:layout_height="wrap_content"
+    Android:orientation="vertical"
+    Android:padding="4dp" >
+
+    <TextView
+        Android:id="@+id/mFUrl"
+        Android:layout_width="wrap_content"
+        Android:layout_height="wrap_content"
+        Android:layout_alignLeft="@+id/mFTitle"
+        Android:layout_alignParentTop="true"
+        Android:layout_alignRight="@+id/mFTitle"
+        Android:layout_marginTop="18dp"
+        Android:text="melody_path"
+        Android:textColor="@color/bg_dark_tab"
+        Android:textSize="11dp"
+        Android:visibility="gone" />
+
+    <TextView
+        Android:id="@+id/mFTitle"
+        Android:layout_width="wrap_content"
+        Android:layout_height="wrap_content"
+        Android:layout_alignParentLeft="true"
+        Android:layout_alignParentRight="true"
+        Android:layout_alignParentTop="true"
+        Android:text="melody magic"
+        Android:textColor="@color/bg_dark_tab"
+        Android:textSize="15dp" />
+
+    <TextView
+        Android:id="@+id/mArtist"
+        Android:layout_width="wrap_content"
+        Android:layout_height="wrap_content"
+        Android:layout_alignLeft="@+id/mFTitle"
+        Android:layout_below="@+id/mFTitle"
+        Android:layout_marginTop="2dp"
+        Android:text="artist"
+        Android:textColor="@color/bg_dark"
+        Android:textSize="11dp" />
+
+</RelativeLayout>

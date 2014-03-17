@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="red">#900</color>
+    <color name="green">#090</color>
+    <color name="blue">#009</color>
+    <color name="white">#FFF</color>
+    <color name="black">#000</color>
+    <color name="tab_indicator_text_selected">#ffffff</color>
+    <color name="tab_indicator_text_unselected">#aac5d7</color>
+    <!-- 边界颜色 建议与底色相同 -->
+    <!-- #ffcc0000 备份 -->
+    <color name="page_viewer_margin_color">#ff23262a</color>
+    <color name="darker_gray">#ffaaaaaa</color>
+    <color name="white">#ffffffff</color>
+    <color name="black">#ff000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="holo_red_dark">#ffcc0000</color>
+    <color name="textColor_dark">#ffa2a2a2</color>
+    <color name="bg_main">#fff1f2f3</color>
+     <color name="bg_div">#ffd8d9da</color>
+     <color name="bg_dark">#ff181a1d</color>
+    <color name="bg_dark_tab">#ff0b1b1c</color>
+    
+    
+</resources>
