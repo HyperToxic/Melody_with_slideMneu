@@ -25,13 +25,13 @@ public class MelodyMenuFragment extends ListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		String[] colors = getResources().getStringArray(R.array.menu_names);
+		String[] menus = getResources().getStringArray(R.array.menu_names);
 
-		ArrayAdapter<String> colorAdapter = new ArrayAdapter<String>(
+		ArrayAdapter<String> menuAdapter = new ArrayAdapter<String>(
 				getActivity(), android.R.layout.simple_list_item_1,
-				android.R.id.text1, colors);
+				android.R.id.text1, menus);
 
-		setListAdapter(colorAdapter);
+		setListAdapter(menuAdapter);
 	}
 
 	@Override

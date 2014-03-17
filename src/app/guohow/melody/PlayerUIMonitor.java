@@ -3,6 +3,7 @@ package app.guohow.melody;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.SeekBar;
 import app.guohow.melody.player.MusicPlayer;
 
 import com.guohow.melody_sildemenu.R;
@@ -12,13 +13,17 @@ public class PlayerUIMonitor {
 	public static String playingSongTitle = "melody rhythm";
 	public static String playingSongArtist = "art-melody";
 	static Button btn_play, btn_previous, btn_next;
+	static SeekBar seekBar;
 
-	public PlayerUIMonitor(Button btn_play, Button btn_previous, Button btn_next) {
+	public PlayerUIMonitor(Button btn_play, Button btn_previous,
+			Button btn_next, SeekBar seekBar) {
 		PlayerUIMonitor.btn_next = btn_next;
 		PlayerUIMonitor.btn_play = btn_play;
 		PlayerUIMonitor.btn_previous = btn_previous;
+		PlayerUIMonitor.seekBar = seekBar;
 		btnControler();
-		
+		seekBarInit();
+
 	}
 
 	private static void btnControler() {
@@ -82,6 +87,10 @@ public class PlayerUIMonitor {
 
 		}
 
+		if (seekBar != null && !MusicPlayer.hasEverPlayed) {
+			seekBar.setVisibility(View.GONE);
+		}
+
 	}
 
 	public static void btnCheck() {
@@ -96,11 +105,17 @@ public class PlayerUIMonitor {
 	}
 
 	public static void updatePlayingSongInfo() {
-		if(MusicPlayer.hasEverPlayed){
-		playingSongTitle = (String) MusicPlayer.data.get(MusicPlayer.current)
-				.get("title");
-		playingSongArtist = (String) MusicPlayer.data.get(MusicPlayer.current)
-				.get("artist");
+		if (MusicPlayer.hasEverPlayed) {
+			playingSongTitle = (String) MusicPlayer.data.get(
+					MusicPlayer.current).get("title");
+			playingSongArtist = (String) MusicPlayer.data.get(
+					MusicPlayer.current).get("artist");
 		}
+	}
+
+	private void seekBarInit() {
+
+		MusicPlayer.seekBar = seekBar;
+
 	}
 }

@@ -15,9 +15,11 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toast;
 import app.guohow.melody.player.MusicPlayer;
+
 import com.guohow.melody_sildemenu.R;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -41,7 +43,7 @@ public class Melody extends SlidingFragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setTitle("Melody Music");
+		setTitle("");
 
 		initSlidingMenu(savedInstanceState);
 		// this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -78,6 +80,25 @@ public class Melody extends SlidingFragmentActivity {
 				handler.postDelayed(this, 1000);
 			}
 		});
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			// 退出时暂停，等待恢复，继续播放
+			MusicPlayer.stop();
+			MusicPlayer.FLAG = 0;
+			finish();
+			return true;
+		}
+		if(keyCode==KeyEvent.KEYCODE_MENU&& event.getRepeatCount()==0){
+			
+		//	showMenu();
+			toggle();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override

@@ -27,6 +27,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import app.guohow.melody.database.SQLHelper;
@@ -42,6 +43,7 @@ public class AllSongsList extends Fragment {
 	protected Context mContext;
 	List<HashMap<String, Object>> data;
 	Button btn_play, btn_next, btn_previous;
+	SeekBar seekBar;
 	TextView bottomInfo;
 	ListView listView = null;
 
@@ -67,12 +69,21 @@ public class AllSongsList extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mRootView = inflater.inflate(R.layout.songslist, container, false);
+		//设置actionBar图标
+		getActivity().getActionBar().setLogo(R.drawable.ic_local);
+		getActivity().getActionBar().setTitle("本地音乐");
+		return mRootView;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
 
 		initMusicListAdapter();
 		listItemInit();
 		onItemLongPressedControler();
 		btn_Control();
-		return mRootView;
+		super.onActivityCreated(savedInstanceState);
 	}
 
 	/*
@@ -88,10 +99,14 @@ public class AllSongsList extends Fragment {
 			public void run() {
 				PlayerUIMonitor.btnCheck();
 				if (MusicPlayer.data != null && bottomInfo != null) {
-					bottomInfo.setText("正在播放:" + PlayerUIMonitor.playingSongTitle
-							+ "\t" + "艺术家:" + PlayerUIMonitor.playingSongArtist);
-				}
+					bottomInfo.setText("正在播放:"
+							+ PlayerUIMonitor.playingSongTitle + "  " + "艺术家:"
+							+ PlayerUIMonitor.playingSongArtist);
 
+				}
+				if (seekBar != null) {
+					seekBar.setProgress(MusicPlayer.player.getCurrentPosition());
+				}
 				// 1秒之后再次发送
 				handler.postDelayed(this, 1000);
 			}
@@ -176,12 +191,18 @@ public class AllSongsList extends Fragment {
 					if (bottomInfo != null) {
 						bottomInfo.setVisibility(View.VISIBLE);
 					}
+					if (seekBar != null && !MusicPlayer.hasEverPlayed) {
+						seekBar.setVisibility(View.GONE);
+					}else{
+						seekBar.setVisibility(View.GONE);
+					}
 
 					System.out.println("停止...");
 					break;
 				case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
 					if (bottomInfo != null) {
 						bottomInfo.setVisibility(View.GONE);
+						seekBar.setVisibility(View.GONE);
 					}
 
 					System.out.println("正在滑动...");
@@ -208,7 +229,8 @@ public class AllSongsList extends Fragment {
 		btn_play = (Button) mRootView.findViewById(R.id.play);
 		btn_next = (Button) mRootView.findViewById(R.id.next);
 		btn_previous = (Button) mRootView.findViewById(R.id.previous);
-		new PlayerUIMonitor(btn_play, btn_previous, btn_next);
+		seekBar = (SeekBar) mRootView.findViewById(R.id.seekBar1);
+		new PlayerUIMonitor(btn_play, btn_previous, btn_next, seekBar);
 	}
 
 	private void onItemLongPressedControler() {

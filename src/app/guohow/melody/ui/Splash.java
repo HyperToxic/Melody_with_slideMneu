@@ -30,9 +30,7 @@ public class Splash extends Activity {
 		setContentView(R.layout.splash);
 
 		TextView textView = (TextView) findViewById(R.id.splash);
-		// textView.setText(getText());
-
-		// hide_tab = getHideTab();
+		textView.setText(getText());
 
 		final Intent intent = new Intent();
 
@@ -54,7 +52,7 @@ public class Splash extends Activity {
 
 		SharedPreferences spf = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		// text = spf.getString("flash_text_perf", "MELODY");
+		text = spf.getString("flash_text_perf", "MELODY");
 		return text;
 	}
 

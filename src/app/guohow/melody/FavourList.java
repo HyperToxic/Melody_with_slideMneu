@@ -26,6 +26,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import app.guohow.melody.database.SQLHelper;
@@ -38,6 +39,7 @@ public class FavourList extends Fragment {
 	TextView bottomInfo;
 	private ListView mFavourList;
 	Button btn_play, btn_next, btn_previous;
+	SeekBar seekBar;
 	protected Context mContext;
 	public static int UPDATE = 0;
 	private static SQLHelper dbHelper;
@@ -65,18 +67,11 @@ public class FavourList extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		// add by guohow
+			
 		mRootView = inflater.inflate(R.layout.favourite, container, false);
-
-		// 表操作
-		createCursorTable();
-		// 初始化列表
-		initList();
-		// 监听列表事件
-		listItemAda();
-		// 长按事件监听
-		onItemLongPressedControler();
-		//按钮监听
-		btn_Control();
+		getActivity().getActionBar().setLogo(R.drawable.ic_fav);
+		getActivity().getActionBar().setTitle("我喜欢");
 		return mRootView;
 	}
 
@@ -92,11 +87,14 @@ public class FavourList extends Fragment {
 					// 初始化列表
 					initList();
 					UPDATE = 0;
-			}
+				}
 				if (MusicPlayer.data != null && bottomInfo != null) {
 					bottomInfo.setText("正在播放:"
-							+ PlayerUIMonitor.playingSongTitle + "\t" + "艺术家:"
+							+ PlayerUIMonitor.playingSongTitle + "  " + "艺术家:"
 							+ PlayerUIMonitor.playingSongArtist);
+				}
+				if (seekBar != null) {
+					seekBar.setProgress(MusicPlayer.player.getCurrentPosition());
 				}
 				handler.postDelayed(this, 1000);
 			}
@@ -105,13 +103,28 @@ public class FavourList extends Fragment {
 	}
 
 	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+
+		// 表操作
+		createCursorTable();
+		// 初始化列表
+		initList();
+		// 监听列表事件
+		listItemAda();
+		// 长按事件监听
+		onItemLongPressedControler();
+		// 按钮监听
+		btn_Control();
+		super.onActivityCreated(savedInstanceState);
+	}
+
+	@Override
 	public void onViewStateRestored(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 
 		super.onViewStateRestored(savedInstanceState);
 	}
-
-
 
 	// 创建、查询
 	private void createCursorTable() {
@@ -136,7 +149,7 @@ public class FavourList extends Fragment {
 				map.put("title", cursor.getString(1));
 				map.put("artist", cursor.getString(2));
 				map.put("url", cursor.getString(3));
-				
+
 				data.add(map);
 				cursor.moveToNext();
 			}
@@ -150,6 +163,7 @@ public class FavourList extends Fragment {
 		}
 
 	}
+
 	private void initList() {
 		mFavourList = (ListView) mRootView.findViewById(R.id.allSongsList);
 		// 更新data
@@ -209,7 +223,11 @@ public class FavourList extends Fragment {
 				case OnScrollListener.SCROLL_STATE_IDLE: //
 					if (bottomInfo != null) {
 						bottomInfo.setVisibility(View.VISIBLE);
-						
+					}
+					if (seekBar != null && !MusicPlayer.hasEverPlayed) {
+						seekBar.setVisibility(View.GONE);
+					}else{
+						seekBar.setVisibility(View.GONE);
 					}
 
 					System.out.println("停止...");
@@ -217,6 +235,7 @@ public class FavourList extends Fragment {
 				case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
 					if (bottomInfo != null) {
 						bottomInfo.setVisibility(View.GONE);
+						seekBar.setVisibility(View.GONE);
 					}
 
 					System.out.println("正在滑动...");
@@ -243,7 +262,8 @@ public class FavourList extends Fragment {
 		btn_play = (Button) mRootView.findViewById(R.id.play);
 		btn_next = (Button) mRootView.findViewById(R.id.next);
 		btn_previous = (Button) mRootView.findViewById(R.id.previous);
-		new PlayerUIMonitor(btn_play, btn_previous, btn_next);
+		seekBar = (SeekBar) mRootView.findViewById(R.id.seekBar1);
+		new PlayerUIMonitor(btn_play, btn_previous, btn_next, seekBar);
 	}
 
 	private void onItemLongPressedControler() {

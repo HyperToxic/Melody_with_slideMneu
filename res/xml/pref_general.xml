@@ -15,17 +15,6 @@
         android:singleLine="false"
         android:summary="更改欢迎屏幕显示的内容"
         android:title="欢迎屏幕文字" />
-
-    <PreferenceCategory
-        android:key="effect"
-        android:title="视觉" >
-    </PreferenceCategory>
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="full_screen_perf"
-        android:summary="隐藏系统状态栏，将得到更好的视觉效果"
-        android:title="隐藏状态栏" />
    
     <PreferenceCategory
         android:key="more"

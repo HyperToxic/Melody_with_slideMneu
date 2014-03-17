@@ -24,7 +24,8 @@
         Android:paddingLeft="4dp"
         Android:text="text"
         Android:textColor="@color/bg_dark_tab"
-        Android:textSize="15dp" />
+        Android:textSize="16dp"
+        Android:textStyle="bold" />
 
     <TextView
         Android:id="@+id/mArt"
@@ -33,7 +34,7 @@
         Android:layout_alignLeft="@+id/mTitle"
         Android:layout_below="@+id/mTitle"
         Android:paddingLeft="4dp"
-         Android:paddingTop="3dp"
+        Android:paddingTop="3dp"
         Android:text="text"
         Android:textColor="@color/bg_dark_tab"
         Android:textSize="11dp" />

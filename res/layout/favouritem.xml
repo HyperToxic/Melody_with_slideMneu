@@ -3,7 +3,7 @@
     Android:layout_width="fill_parent"
     Android:layout_height="wrap_content"
     Android:orientation="vertical"
-    Android:padding="4dp" >
+    Android:padding="5dp" >
 
     <TextView
         Android:id="@+id/mFUrl"
@@ -26,8 +26,9 @@
         Android:layout_alignParentRight="true"
         Android:layout_alignParentTop="true"
         Android:text="melody magic"
+        Android:textStyle="bold"
         Android:textColor="@color/bg_dark_tab"
-        Android:textSize="15dp" />
+        Android:textSize="16dp" />
 
     <TextView
         Android:id="@+id/mArtist"
@@ -35,7 +36,7 @@
         Android:layout_height="wrap_content"
         Android:layout_alignLeft="@+id/mFTitle"
         Android:layout_below="@+id/mFTitle"
-        Android:layout_marginTop="2dp"
+        Android:layout_marginTop="4dp"
         Android:text="artist"
         Android:textColor="@color/bg_dark"
         Android:textSize="11dp" />
